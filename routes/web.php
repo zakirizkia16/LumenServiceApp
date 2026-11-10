@@ -70,3 +70,12 @@ $router->group(['middleware' => ['auth']], function () use ($router) {
     $router->put('/post/{id}', 'PostsController@update');
     $router->delete('/post/{id}', 'PostsController@destroy');
 });
+
+// Task
+$router->group(['middleware' => ['auth']], function () use ($router) {
+    $router->get('/tasks', 'TaskController@index');
+    $router->post('/tasks', 'TaskController@store');
+    $router->get('/tasks/{id}', 'TaskController@show');
+    $router->put('/tasks/{id}', 'TaskController@update');
+    $router->delete('/tasks/{id}', 'TaskController@destroy');
+});
