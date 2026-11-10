@@ -43,11 +43,11 @@ $router->get('/users/{userId}', 'UsersController@show');
 // $router->get('posts', 'PostsController@index');
 
 // Post REST API Routes
-$router->get('/posts', 'PostsController@index');
-$router->post('/posts', 'PostsController@store');
-$router->get('/post/{id}', 'PostsController@show');
-$router->put('/post/{id}', 'PostsController@update');
-$router->delete('/post/{id}', 'PostsController@destroy');
+// $router->get('/posts', 'PostsController@index');
+// $router->post('/posts', 'PostsController@store');
+// $router->get('/post/{id}', 'PostsController@show');
+// $router->put('/post/{id}', 'PostsController@update');
+// $router->delete('/post/{id}', 'PostsController@destroy');
 
 // Tantangan REST CRUD Products
 $router->get('/products', 'ProductsController@index');
@@ -55,3 +55,18 @@ $router->post('/products', 'ProductsController@store');
 $router->get('/product/{id}', 'ProductsController@show');
 $router->put('/product/{id}', 'ProductsController@update');
 $router->delete('/product/{id}', 'ProductsController@destroy');
+
+// authentication
+$router->group(['prefix' => 'auth'], function () use ($router) {
+    $router->post('/register', 'AuthController@register');
+    $router->post('/login', 'AuthController@login');
+});
+
+// Post
+$router->group(['middleware' => ['auth']], function () use ($router) {
+    $router->get('/posts', 'PostsController@index');
+    $router->post('/posts', 'PostsController@store');
+    $router->get('/post/{id}', 'PostsController@show');
+    $router->put('/post/{id}', 'PostsController@update');
+    $router->delete('/post/{id}', 'PostsController@destroy');
+});

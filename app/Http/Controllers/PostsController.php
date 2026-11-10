@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class PostsController extends Controller
 {
@@ -70,24 +71,22 @@ class PostsController extends Controller
     // GET /posts (Read All)
     public function index(Request $request)
     {
-        $accept = $this->validateAccept($request);
-        if (!$accept) {
-            return response('Not Acceptable!', 406);
-        }
-
-        $paginator = Post::orderBy("id", "DESC")->paginate(2);
+        $posts = Post::where(['user_id' => Auth::user()->id])
+            ->orderBy('id', 'DESC')
+            ->paginate(2)
+            ->toArray();
 
         $response = [
-            "total_count" => $paginator->total(),
-            "limit" => $paginator->perPage(),
-            "pagination" => [
-                "next_page" => $paginator->nextPageUrl(),
-                "current_page" => $paginator->currentPage()
+            'total_count' => $posts['total'],
+            'limit'       => $posts['per_page'],
+            'pagination'  => [
+                'next_page'    => $posts['next_page_url'],
+                'current_page' => $posts['current_page'],
             ],
-            "data" => $paginator->items(), // Method items() ini yang ngambil data array-nya
+            'data' => $posts['data'],
         ];
 
-        return $this->buildResponse($response, $accept, 200);
+        return response()->json($response, 200);
     }
 
     // GET /post/{id} (Read Detail) -> Tantangan #2
